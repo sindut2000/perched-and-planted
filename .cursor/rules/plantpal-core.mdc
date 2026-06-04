@@ -1,0 +1,29 @@
+---
+description: PlantPal project conventions — stack, config, and architecture
+alwaysApply: true
+---
+
+# PlantPal Core
+
+## Stack
+FastAPI (async) · PostgreSQL · SQLAlchemy async · Alembic · Pydantic v2 · pytest · Docker Compose · YAML config
+
+## Layout
+- `app/api/` — route handlers only (thin)
+- `app/services/` — all business logic
+- `app/models/` — SQLAlchemy models
+- `app/schemas/` — Pydantic request/response schemas
+- `app/core/` — config, database, logging
+- `config/` — YAML config files (never secrets)
+
+## Non-negotiables
+- Config in YAML (`config/`), secrets in env (`.env.example` only — never commit `.env`)
+- Every schema change needs an Alembic migration
+- Every feature needs a pytest test in `tests/`
+- Use async SQLAlchemy sessions; no sync DB calls in async routes
+- Prefer editing existing files over adding abstractions
+
+## Local dev
+- Full stack: `make up` → http://localhost:8000/docs
+- Desktop Postgres: `python3 -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"`
+- Migrations: `alembic upgrade head` or `make migrate`

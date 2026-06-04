@@ -1,0 +1,22 @@
+---
+description: CodeRabbit demo project goals and planted-bug workflow
+alwaysApply: true
+---
+
+# CodeRabbit Demo
+
+This repo showcases CodeRabbit code review. PRs should touch multiple files.
+
+## What each PR should exercise
+- Security: hardcoded secrets, missing auth
+- Logic bugs: off-by-one streaks, bad schedule math
+- Missing error handling, N+1 queries, missing tests, migration risks
+
+## When asked to "plant a bug"
+- Make it subtle and realistic (not syntax errors)
+- Touch 2+ files so review breadth is visible
+- Document the expected CodeRabbit finding in the PR description (not in code comments)
+
+## PR hygiene
+- Branch per feature; run `make test` and `ruff check` before push
+- Keep `.coderabbit.yaml` path instructions in sync when adding new layers

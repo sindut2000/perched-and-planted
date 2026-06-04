@@ -1,0 +1,11 @@
+services:
+  db:
+    ports:
+      - "5432:5432"
+
+  app:
+    volumes:
+      - ./app:/app/app
+      - ./config:/app/config
+      - ./tests:/app/tests
+    command: ["--reload"]

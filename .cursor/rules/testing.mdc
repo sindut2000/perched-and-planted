@@ -1,0 +1,26 @@
+---
+description: pytest conventions for PlantPal
+globs: tests/**
+alwaysApply: false
+---
+
+# Testing
+
+## Requirements
+- Use pytest + pytest-asyncio (`asyncio_mode = auto`)
+- Test against real PostgreSQL (via `DATABASE_URL` or compose `db` service)
+- No SQLite in-memory shortcuts — behavior must match production
+
+## Structure
+- `conftest.py` — shared fixtures (async client, db session, test app)
+- One test file per module: `test_plants.py` for `app/services/plants.py`
+- Name tests descriptively: `test_watering_streak_resets_after_missed_day`
+
+## Do
+- Use `httpx.AsyncClient` with `ASGITransport` for API tests
+- Assert HTTP status codes and response schema shape
+
+## Don't
+- Commit secrets or real Telegram tokens in test files
+- Skip tests for new features
+- Mock the database unless testing external APIs (Telegram, ESP32)

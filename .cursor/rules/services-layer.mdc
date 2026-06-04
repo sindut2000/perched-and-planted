@@ -1,0 +1,23 @@
+---
+description: Business logic layer conventions
+globs: app/services/**
+alwaysApply: false
+---
+
+# Services Layer
+
+All domain logic lives here — watering schedules, streaks, incidents, notifications orchestration.
+
+## Do
+- Accept `AsyncSession` as first parameter
+- Use SQLAlchemy 2.0 style (`select()`, `session.execute()`)
+- Raise domain-specific exceptions; let routes map to HTTP errors
+- Keep functions focused; one service file per domain area
+
+## Don't
+- Import FastAPI `HTTPException` — services should not know about HTTP
+- Use N+1 query patterns; prefer joinedload/selectinload for lists
+- Hardcode Telegram tokens or DB URLs
+
+## Testing
+Every public service function gets a test in `tests/` using real Postgres fixtures.

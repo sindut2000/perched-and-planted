@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+early_access: false
+reviews:
+  profile: chill
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "app/api/**"
+      instructions: |
+        Routes must stay thin — business logic belongs in app/services/.
+        Flag missing auth on protected endpoints, hardcoded config, and broad exception handlers.
+    - path: "app/services/**"
+      instructions: |
+        Check for logic bugs (schedule math, streak calculations), missing error handling,
+        N+1 queries, and HTTP concerns leaking into the service layer.
+    - path: "app/models/**"
+      instructions: |
+        Review SQLAlchemy models for missing indexes, nullable mistakes, and relationship loading strategy.
+    - path: "alembic/**"
+      instructions: |
+        Flag risky migrations: non-nullable columns on populated tables, irreversible drops,
+        missing downgrade steps, and data loss without backfill.
+    - path: "tests/**"
+      instructions: |
+        Every new feature needs tests. Flag missing coverage, hardcoded secrets, and SQLite shortcuts
+        when production uses PostgreSQL.
+    - path: "config/**"
+      instructions: |
+        No secrets in YAML. Flag passwords, tokens, or connection strings committed to config files.
+    - path: "app/api/routes/health.py"
+      instructions: |
+        Health checks must reflect real database state — flag fake "connected" responses when DB is down.
+chat:
+  auto_reply: true

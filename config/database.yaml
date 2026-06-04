@@ -1,0 +1,6 @@
+database:
+  pool_size: 5
+  max_overflow: 10
+  echo: false
+  connect_retries: 10
+  connect_retry_delay_seconds: 2
