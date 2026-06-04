@@ -1,5 +1,7 @@
 # PlantPal
 
+Plant monitoring system — make your balcony greener.
+
 Plant care tracker API — watering schedules, health notes, Telegram notifications, and (eventually) ESP32 soil sensors.
 
 ## Quick start
