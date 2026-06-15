@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.schemas.plant import PlantCreate, PlantResponse, PlantUpdate
 from app.services import plants as plant_service
+from app.services import watering as watering_service
 
 router = APIRouter(prefix="/plants", tags=["plants"])
 
@@ -14,13 +15,13 @@ async def create_plant(
     db: AsyncSession = Depends(get_db),
 ) -> PlantResponse:
     plant = await plant_service.create_plant(db, payload)
-    return PlantResponse.model_validate(plant)
+    return PlantResponse.from_plant(plant)
 
 
 @router.get("", response_model=list[PlantResponse])
 async def list_plants(db: AsyncSession = Depends(get_db)) -> list[PlantResponse]:
     plants = await plant_service.list_plants(db)
-    return [PlantResponse.model_validate(plant) for plant in plants]
+    return [PlantResponse.from_plant(plant) for plant in plants]
 
 
 @router.get("/{plant_id}", response_model=PlantResponse)
@@ -31,7 +32,18 @@ async def get_plant(
     plant = await plant_service.get_plant(db, plant_id)
     if plant is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Plant not found")
-    return PlantResponse.model_validate(plant)
+    return PlantResponse.from_plant(plant)
+
+
+@router.post("/{plant_id}/water", response_model=PlantResponse)
+async def water_plant(
+    plant_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> PlantResponse:
+    plant = await watering_service.mark_plant_watered(db, plant_id)
+    if plant is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Plant not found")
+    return PlantResponse.from_plant(plant)
 
 
 @router.patch("/{plant_id}", response_model=PlantResponse)
@@ -43,7 +55,7 @@ async def update_plant(
     plant = await plant_service.update_plant(db, plant_id, payload)
     if plant is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Plant not found")
-    return PlantResponse.model_validate(plant)
+    return PlantResponse.from_plant(plant)
 
 
 @router.delete("/{plant_id}", status_code=status.HTTP_204_NO_CONTENT)

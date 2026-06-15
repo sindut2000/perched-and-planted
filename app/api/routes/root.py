@@ -1,15 +1,16 @@
 from fastapi import APIRouter
+from fastapi.responses import FileResponse
 
-from app.core.config import get_settings
-from app.schemas.root import RootResponse
+from app.core.constants import STATIC_DIR
 
 router = APIRouter(tags=["root"])
 
 
-@router.get("/", response_model=RootResponse)
-async def read_root() -> RootResponse:
-    settings = get_settings()
-    return RootResponse(
-        app=settings.app.name,
-        version=settings.app.version,
-    )
+@router.get("/", include_in_schema=False)
+async def serve_frontend() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html")
+
+
+@router.get("/api", include_in_schema=False)
+async def api_info() -> dict[str, str]:
+    return {"message": "PlantPal API — see /docs for endpoints"}

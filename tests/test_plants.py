@@ -1,7 +1,7 @@
 import pytest
 from app.models.plant import Plant
 from httpx import AsyncClient
-from sqlalchemy import delete
+from sqlalchemy import delete, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -72,6 +72,54 @@ async def test_update_plant(client: AsyncClient) -> None:
     payload = response.json()
     assert payload["location"] == "Sunny window"
     assert payload["watering_interval_days"] == 14
+
+
+@pytest.mark.asyncio
+async def test_update_plant_rejects_explicit_null_on_required_field(
+    client: AsyncClient,
+) -> None:
+    create_response = await client.post("/plants", json={"name": "Aloe"})
+    plant_id = create_response.json()["id"]
+
+    for body in ({"name": None}, {"watering_interval_days": None}):
+        response = await client.patch(f"/plants/{plant_id}", json=body)
+        assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_db_defaults_and_updated_at_trigger(db_session: AsyncSession) -> None:
+    # Raw insert omitting watering_interval_days relies on the DB server_default.
+    await db_session.execute(
+        text(
+            "INSERT INTO plants (name, updated_at) "
+            "VALUES ('Raw', '2000-01-01T00:00:00+00')"
+        )
+    )
+    await db_session.commit()
+
+    row = (
+        await db_session.execute(
+            text(
+                "SELECT watering_interval_days, updated_at "
+                "FROM plants WHERE name = 'Raw'"
+            )
+        )
+    ).one()
+    assert row.watering_interval_days == 7
+    assert row.updated_at.year == 2000
+
+    # A raw UPDATE that does not set updated_at must still bump it via the trigger.
+    await db_session.execute(
+        text("UPDATE plants SET location = 'shelf' WHERE name = 'Raw'")
+    )
+    await db_session.commit()
+
+    bumped = (
+        await db_session.execute(
+            text("SELECT updated_at FROM plants WHERE name = 'Raw'")
+        )
+    ).scalar_one()
+    assert bumped.year > 2000
 
 
 @pytest.mark.asyncio
