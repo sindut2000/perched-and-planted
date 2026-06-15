@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlantPal 🐰🌱</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f3faf4;
+        --bg-accent: #e8f5e9;
+        --card: #ffffff;
+        --text: #1b4332;
+        --muted: #52796f;
+        --primary: #2d6a4f;
+        --primary-dark: #1b4332;
+        --accent: #95d5b2;
+        --accent-soft: #d8f3dc;
+        --warning: #e9c46a;
+        --danger: #e76f51;
+        --shadow: 0 12px 30px rgba(27, 67, 50, 0.08);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Nunito", system-ui, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, #d8f3dc 0%, transparent 28%),
+          radial-gradient(circle at top right, #ffe8d6 0%, transparent 22%),
+          linear-gradient(180deg, var(--bg) 0%, #eef7ef 100%);
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+      }
+
+      .hero {
+        display: grid;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .hero-card {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(149, 213, 178, 0.45);
+        border-radius: 28px;
+        padding: 1.75rem;
+        box-shadow: var(--shadow);
+      }
+
+      .mascot {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .mascot-icon {
+        width: 84px;
+        height: 84px;
+        border-radius: 24px;
+        display: grid;
+        place-items: center;
+        font-size: 2.4rem;
+        background: linear-gradient(135deg, #fff7ed, #d8f3dc);
+        box-shadow: inset 0 0 0 1px rgba(45, 106, 79, 0.08);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        line-height: 1.05;
+      }
+
+      .subtitle {
+        margin: 0.4rem 0 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 1.25rem;
+      }
+
+      .panel {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 1.35rem;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(149, 213, 178, 0.35);
+      }
+
+      .panel h2 {
+        margin: 0 0 1rem;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.35rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.92rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid #cfe8d6;
+        border-radius: 12px;
+        padding: 0.75rem 0.9rem;
+        font: inherit;
+        background: #fbfffc;
+        color: var(--text);
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: 2px solid rgba(45, 106, 79, 0.18);
+        border-color: var(--primary);
+      }
+
+      .field {
+        margin-bottom: 0.9rem;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.8rem 1.2rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), #40916c);
+        color: white;
+        box-shadow: 0 10px 20px rgba(45, 106, 79, 0.18);
+      }
+
+      .btn-secondary {
+        background: var(--accent-soft);
+        color: var(--primary-dark);
+      }
+
+      .btn-danger {
+        background: #fde8e4;
+        color: var(--danger);
+      }
+
+      .plants-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .plants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+
+      .plant-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 1.1rem;
+        border: 1px solid rgba(149, 213, 178, 0.35);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .plant-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: start;
+      }
+
+      .plant-name {
+        margin: 0;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.2rem;
+      }
+
+      .plant-meta {
+        margin: 0.2rem 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .badge.due {
+        background: #fff3cd;
+        color: #9a6b00;
+      }
+
+      .badge.overdue {
+        background: #fde8e4;
+        color: #b4432f;
+      }
+
+      .badge.ok {
+        background: var(--accent-soft);
+        color: var(--primary-dark);
+      }
+
+      .plant-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .plant-actions button {
+        flex: 1;
+        min-width: 110px;
+        padding: 0.65rem 0.9rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: var(--radius);
+        border: 1px dashed #b7e4c7;
+      }
+
+      .hint {
+        margin-top: 0.75rem;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--primary-dark);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .toast {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        background: var(--primary-dark);
+        color: white;
+        padding: 0.9rem 1rem;
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: all 0.2s ease;
+        pointer-events: none;
+        max-width: 320px;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="mascot">
+            <div class="mascot-icon" aria-hidden="true">🐰🌱</div>
+            <div>
+              <h1>PlantPal</h1>
+              <p class="subtitle">Your bunny gardener remembers every watering day.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <h2>Add a plant</h2>
+          <form id="add-plant-form">
+            <div class="field">
+              <label for="name">Plant name</label>
+              <input id="name" name="name" placeholder="Monstera" required />
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="species">Species</label>
+                <input id="species" name="species" placeholder="Monstera deliciosa" />
+              </div>
+              <div class="field">
+                <label for="location">Location</label>
+                <input id="location" name="location" placeholder="Balcony shelf" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="watering_interval_days">Water every (days)</label>
+              <input
+                id="watering_interval_days"
+                name="watering_interval_days"
+                type="number"
+                min="1"
+                value="7"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Likes morning sun"></textarea>
+            </div>
+            <button class="btn-primary" type="submit">Plant it 🌿</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Text reminders</h2>
+          <p class="hint">
+            Save your phone number in E.164 format (example: <code>+15551234567</code>). PlantPal
+            texts you when plants are due.
+          </p>
+          <form id="reminder-form">
+            <div class="field">
+              <label for="phone">Your phone number</label>
+              <input id="phone" name="phone" placeholder="+15551234567" />
+            </div>
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap">
+              <button class="btn-primary" type="submit">Save number</button>
+              <button class="btn-secondary" id="test-reminder" type="button">Send test reminder</button>
+            </div>
+          </form>
+          <p class="hint" id="reminder-status">Checking reminder setup…</p>
+        </div>
+      </section>
+
+      <section style="margin-top: 2rem">
+        <div class="plants-header">
+          <h2 style="margin: 0; font-family: 'Fraunces', Georgia, serif">Your garden</h2>
+          <span class="status-pill" id="due-count">🐰 Loading plants…</span>
+        </div>
+        <div class="plants-grid" id="plants-grid"></div>
+        <div class="empty-state" id="empty-state" hidden>
+          No plants yet. Add your first leafy friend above.
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const toast = document.getElementById("toast");
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      function formatStatus(plant) {
+        if (plant.is_due) {
+          if (plant.days_until_watering < 0) {
+            const overdue = Math.abs(plant.days_until_watering);
+            return {
+              label: `Overdue ${overdue}d`,
+              className: "overdue",
+              emoji: "💧",
+            };
+          }
+          return { label: "Due today", className: "due", emoji: "💧" };
+        }
+        return {
+          label: `In ${plant.days_until_watering}d`,
+          className: "ok",
+          emoji: "🌱",
+        };
+      }
+
+      function plantCard(plant) {
+        const status = formatStatus(plant);
+        const nextDate = new Date(plant.next_watering_at).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+        });
+
+        return `
+          <article class="plant-card" data-id="${plant.id}">
+            <div class="plant-top">
+              <div>
+                <h3 class="plant-name">${plant.name}</h3>
+                <p class="plant-meta">
+                  ${plant.species || "Unknown species"}${plant.location ? ` · ${plant.location}` : ""}
+                </p>
+              </div>
+              <span class="badge ${status.className}">${status.emoji} ${status.label}</span>
+            </div>
+            <p class="plant-meta">Water every ${plant.watering_interval_days} days · Next: ${nextDate}</p>
+            ${plant.notes ? `<p class="plant-meta">${plant.notes}</p>` : ""}
+            <div class="plant-actions">
+              <button class="btn-primary water-btn" type="button">Watered 💧</button>
+              <button class="btn-danger delete-btn" type="button">Remove</button>
+            </div>
+          </article>
+        `;
+      }
+
+      async function loadPlants() {
+        const response = await fetch("/plants");
+        const plants = await response.json();
+        const grid = document.getElementById("plants-grid");
+        const empty = document.getElementById("empty-state");
+        const dueCount = document.getElementById("due-count");
+
+        const duePlants = plants.filter((plant) => plant.is_due);
+        dueCount.textContent =
+          duePlants.length > 0
+            ? `🐰 ${duePlants.length} plant${duePlants.length === 1 ? "" : "s"} need water`
+            : "🐰 All plants are happy";
+
+        if (!plants.length) {
+          grid.innerHTML = "";
+          empty.hidden = false;
+          return;
+        }
+
+        empty.hidden = true;
+        grid.innerHTML = plants.map(plantCard).join("");
+      }
+
+      async function loadReminderSettings() {
+        const response = await fetch("/reminders/settings");
+        const settings = await response.json();
+        const status = document.getElementById("reminder-status");
+        document.getElementById("phone").value = settings.phone || "";
+
+        const smsText = settings.sms_configured
+          ? "Twilio is configured on the server."
+          : "Add Twilio credentials to .env to enable real texts.";
+        const phoneText = settings.phone
+          ? `Reminders will text ${settings.phone}.`
+          : "Add your phone number to get texts.";
+        status.textContent = `${phoneText} ${smsText}`;
+      }
+
+      document.getElementById("add-plant-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const payload = {
+          name: form.name.value.trim(),
+          species: form.species.value.trim() || null,
+          location: form.location.value.trim() || null,
+          watering_interval_days: Number(form.watering_interval_days.value),
+          notes: form.notes.value.trim() || null,
+        };
+
+        const response = await fetch("/plants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          showToast("Could not add plant. Check the form and try again.");
+          return;
+        }
+
+        form.reset();
+        form.watering_interval_days.value = "7";
+        showToast("Plant added. Bunny approved 🐰🌱");
+        await loadPlants();
+      });
+
+      document.getElementById("reminder-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const phone = document.getElementById("phone").value.trim();
+        const response = await fetch("/reminders/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone }),
+        });
+
+        if (!response.ok) {
+          showToast("Phone must look like +15551234567");
+          return;
+        }
+
+        showToast("Reminder number saved");
+        await loadReminderSettings();
+      });
+
+      document.getElementById("test-reminder").addEventListener("click", async () => {
+        const response = await fetch("/reminders/send", { method: "POST" });
+        const result = await response.json();
+
+        if (result.sent) {
+          showToast(`Sent reminder for ${result.plants.join(", ")}`);
+          return;
+        }
+
+        const messages = {
+          no_phone: "Save your phone number first.",
+          sms_not_configured: "Twilio is not configured yet.",
+          none_due: "No plants are due right now.",
+        };
+        showToast(messages[result.reason] || "Reminder not sent.");
+      });
+
+      document.getElementById("plants-grid").addEventListener("click", async (event) => {
+        const card = event.target.closest(".plant-card");
+        if (!card) return;
+        const plantId = card.dataset.id;
+
+        if (event.target.classList.contains("water-btn")) {
+          const response = await fetch(`/plants/${plantId}/water`, { method: "POST" });
+          if (!response.ok) {
+            showToast("Could not mark plant as watered.");
+            return;
+          }
+          showToast("Watered. Bunny is proud of you 🐰💧");
+          await loadPlants();
+        }
+
+        if (event.target.classList.contains("delete-btn")) {
+          const response = await fetch(`/plants/${plantId}`, { method: "DELETE" });
+          if (!response.ok) {
+            showToast("Could not remove plant.");
+            return;
+          }
+          showToast("Plant removed");
+          await loadPlants();
+        }
+      });
+
+      loadPlants();
+      loadReminderSettings();
+    </script>
+  </body>
+</html>

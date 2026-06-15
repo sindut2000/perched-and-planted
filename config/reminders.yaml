@@ -1,0 +1,4 @@
+reminders:
+  enabled: true
+  check_hour_utc: 14
+  message_prefix: "🐰🌱 PlantPal:"
