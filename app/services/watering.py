@@ -33,8 +33,10 @@ async def list_due_plants(session: AsyncSession) -> list[Plant]:
     return [plant for plant in plants if watering_status(plant)[1]]
 
 
-async def mark_plant_watered(session: AsyncSession, plant_id: int) -> Plant | None:
-    result = await session.execute(select(Plant).where(Plant.id == plant_id))
+async def mark_plant_watered(session: AsyncSession, plant_id: int, user_id: int) -> Plant | None:
+    result = await session.execute(
+        select(Plant).where(Plant.id == plant_id, Plant.user_id == user_id)
+    )
     plant = result.scalar_one_or_none()
     if plant is None:
         return None

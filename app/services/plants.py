@@ -7,8 +7,9 @@ from app.models.plant import Plant
 from app.schemas.plant import PlantCreate, PlantUpdate
 
 
-async def create_plant(session: AsyncSession, data: PlantCreate) -> Plant:
+async def create_plant(session: AsyncSession, data: PlantCreate, user_id: int) -> Plant:
     plant = Plant(
+        user_id=user_id,
         name=data.name,
         species=data.species,
         location=data.location,
@@ -21,20 +22,24 @@ async def create_plant(session: AsyncSession, data: PlantCreate) -> Plant:
     return plant
 
 
-async def list_plants(session: AsyncSession) -> list[Plant]:
-    result = await session.execute(select(Plant).order_by(Plant.id))
+async def list_plants(session: AsyncSession, user_id: int) -> list[Plant]:
+    result = await session.execute(
+        select(Plant).where(Plant.user_id == user_id).order_by(Plant.id)
+    )
     return list(result.scalars().all())
 
 
-async def get_plant(session: AsyncSession, plant_id: int) -> Plant | None:
-    result = await session.execute(select(Plant).where(Plant.id == plant_id))
+async def get_plant(session: AsyncSession, plant_id: int, user_id: int) -> Plant | None:
+    result = await session.execute(
+        select(Plant).where(Plant.id == plant_id, Plant.user_id == user_id)
+    )
     return result.scalar_one_or_none()
 
 
 async def update_plant(
-    session: AsyncSession, plant_id: int, data: PlantUpdate
+    session: AsyncSession, plant_id: int, data: PlantUpdate, user_id: int
 ) -> Plant | None:
-    plant = await get_plant(session, plant_id)
+    plant = await get_plant(session, plant_id, user_id)
     if plant is None:
         return None
 
@@ -47,8 +52,8 @@ async def update_plant(
     return plant
 
 
-async def delete_plant(session: AsyncSession, plant_id: int) -> bool:
-    plant = await get_plant(session, plant_id)
+async def delete_plant(session: AsyncSession, plant_id: int, user_id: int) -> bool:
+    plant = await get_plant(session, plant_id, user_id)
     if plant is None:
         return False
 
