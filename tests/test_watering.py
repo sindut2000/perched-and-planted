@@ -84,3 +84,19 @@ async def test_mark_plant_watered(db_session: AsyncSession) -> None:
 @pytest.mark.asyncio
 async def test_mark_plant_watered_missing_returns_none(db_session: AsyncSession) -> None:
     assert await mark_plant_watered(db_session, 99999) is None
+
+
+@pytest.mark.asyncio
+async def test_list_due_plants_empty(db_session: AsyncSession) -> None:
+    due = await list_due_plants(db_session)
+    assert due == []
+
+
+def test_watering_status_fresh_plant_not_due() -> None:
+    now = datetime.now(timezone.utc)
+    plant = _plant(last_watered_at=now, interval=7)
+
+    _next_at, is_due, days_until = watering_status(plant)
+
+    assert is_due is False
+    assert days_until > 0

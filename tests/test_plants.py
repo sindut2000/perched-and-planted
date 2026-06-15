@@ -132,3 +132,40 @@ async def test_delete_plant(client: AsyncClient) -> None:
 
     get_response = await client.get(f"/plants/{plant_id}")
     assert get_response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_update_plant_not_found(client: AsyncClient) -> None:
+    response = await client.patch("/plants/99999", json={"location": "Shelf"})
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_plant_not_found(client: AsyncClient) -> None:
+    response = await client.delete("/plants/99999")
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_water_plant_not_found(client: AsyncClient) -> None:
+    response = await client.post("/plants/99999/water")
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_create_plant_rejects_invalid_watering_interval(client: AsyncClient) -> None:
+    response = await client.post("/plants", json={"name": "Cactus", "watering_interval_days": 0})
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_list_plants_empty(client: AsyncClient) -> None:
+    response = await client.get("/plants")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+@pytest.mark.asyncio
+async def test_create_plant_rejects_name_too_long(client: AsyncClient) -> None:
+    response = await client.post("/plants", json={"name": "A" * 101})
+    assert response.status_code == 422
