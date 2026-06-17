@@ -32,12 +32,20 @@ def get_session_factory() -> async_sessionmaker[AsyncSession]:
     return _session_factory
 
 
+def resolve_database_url(settings: Settings) -> str:
+    if settings.database_url:
+        return settings.database_url
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required but not set"
+    )
+
+
 async def init_db(settings: Settings | None = None) -> None:
     global _engine, _session_factory
     cfg = settings or get_settings()
 
     _engine = create_async_engine(
-        cfg.database_url,
+        resolve_database_url(cfg),
         pool_size=cfg.database.pool_size,
         max_overflow=cfg.database.max_overflow,
         echo=cfg.database.echo,
