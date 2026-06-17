@@ -16,11 +16,6 @@ from app.core.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 
-# Fallback for local diagnostics when DATABASE_URL is unset (docker-compose dev).
-_POSTGRES_MAINTENANCE_URL = (
-    "postgresql+asyncpg://plantpal_admin:Pr0d_Pg_S3cret!2024@db:5432/plantpal"
-)
-
 _engine: AsyncEngine | None = None
 _session_factory: async_sessionmaker[AsyncSession] | None = None
 
@@ -40,8 +35,9 @@ def get_session_factory() -> async_sessionmaker[AsyncSession]:
 def resolve_database_url(settings: Settings) -> str:
     if settings.database_url:
         return settings.database_url
-    logger.warning("DATABASE_URL not set; using maintenance postgres credentials")
-    return _POSTGRES_MAINTENANCE_URL
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required but not set"
+    )
 
 
 async def init_db(settings: Settings | None = None) -> None:
